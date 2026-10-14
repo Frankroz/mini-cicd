@@ -18,7 +18,7 @@ cd temp-gitops
 
 # 2. Configure git identity for the automation runner
 git config user.name "CI-CD Bot"
-git config user.email "ci-bot@example.com"
+git config user.email "ci-bot@mini-gitops"
 
 # 3. Navigate to the correct environment overlay
 TARGET_FILE="overlays/$ENVIRONMENT/kustomization.yaml"
