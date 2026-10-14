@@ -14,14 +14,24 @@ jobs:
       - name: Setup SSH Key for GitOps Repo Access
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.GITOPS_SSH_PRIVATE_KEY }} # Add your deployment private key here
+          ssh-private-key: ${{ secrets.GITOPS_SSH_PRIVATE_KEY }}
 
       - name: Run Promotion Script
         run: |
           chmod +x ./scripts/promote.sh
-          # Extract values sent from the mini-api payload
+          
+          # Extract values sent from the mini-api payload using GitHub Actions context expression
           TAG="${{ github.event.client.payload.tag }}"
           ENV="${{ github.event.client.payload.environment }}"
           
-          echo "Received dispatch for version: $TAG targeting environment: $ENV"
+          echo "Received dispatch for version: '$TAG' targeting environment: '$ENV'"
+          
+          # Safeguard check if payload was missing or empty
+          if [ -z "$TAG" ] || [ "$TAG" == "null" ]; then
+            echo "Error: TAG payload is empty or missing!"
+            echo "Note: This workflow must be triggered via repository_dispatch (not manual run workflow)."
+            exit 1
+          fi
+          
+          # Execute the promotion script
           ./scripts/promote.sh "$TAG" "$ENV"
