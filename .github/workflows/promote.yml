@@ -20,10 +20,6 @@ jobs:
         run: |
           chmod +x ./scripts/promote.sh
           
-          # Print full event JSON for debugging visibility in logs
-          echo "Printing full GitHub event payload:"
-          echo '${{ toJSON(github.event) }}'
-          
           # Extract values sent from the mini-api payload
           TAG="${{ github.event.client_payload.tag }}"
           ENV="${{ github.event.client_payload.environment }}"
