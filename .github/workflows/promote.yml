@@ -25,8 +25,8 @@ jobs:
           echo '${{ toJSON(github.event) }}'
           
           # Extract values sent from the mini-api payload
-          TAG="${{ github.event.client.payload.tag }}"
-          ENV="${{ github.event.client.payload.environment }}"
+          TAG="${{ github.event.client_payload.tag }}"
+          ENV="${{ github.event.client_payload.environment }}"
           
           echo "Received dispatch for version: '$TAG' targeting environment: '$ENV'"
           
