@@ -20,16 +20,20 @@ jobs:
         run: |
           chmod +x ./scripts/promote.sh
           
-          # Extract values sent from the mini-api payload using GitHub Actions context expression
+          # Print full event JSON for debugging visibility in logs
+          echo "Printing full GitHub event payload:"
+          echo '${{ toJSON(github.event) }}'
+          
+          # Extract values sent from the mini-api payload
           TAG="${{ github.event.client.payload.tag }}"
           ENV="${{ github.event.client.payload.environment }}"
           
           echo "Received dispatch for version: '$TAG' targeting environment: '$ENV'"
           
-          # Safeguard check if payload was missing or empty
+          # Fallback check: if tag is empty, let's fail gracefully with context
           if [ -z "$TAG" ] || [ "$TAG" == "null" ]; then
             echo "Error: TAG payload is empty or missing!"
-            echo "Note: This workflow must be triggered via repository_dispatch (not manual run workflow)."
+            echo "Check the JSON payload printed above to see what was received."
             exit 1
           fi
           
