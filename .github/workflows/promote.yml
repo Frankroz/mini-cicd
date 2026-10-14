@@ -1,0 +1,27 @@
+name: Continuous Delivery / Promote Image
+
+on:
+  repository_dispatch:
+    types: [image-pushed]
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout mini-cicd Repo (to get scripts)
+        uses: actions/checkout@v4
+
+      - name: Setup SSH Key for GitOps Repo Access
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.GITOPS_SSH_PRIVATE_KEY }} # Add your deployment private key here
+
+      - name: Run Promotion Script
+        run: |
+          chmod +x ./scripts/promote.sh
+          # Extract values sent from the mini-api payload
+          TAG="${{ github.event.client.payload.tag }}"
+          ENV="${{ github.event.client.payload.environment }}"
+          
+          echo "Received dispatch for version: $TAG targeting environment: $ENV"
+          ./scripts/promote.sh "$TAG" "$ENV"
